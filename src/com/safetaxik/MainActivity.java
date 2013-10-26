@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.main_btn_ride) {
-			startActivity(new Intent(MainActivity.this, RidingActivity.class));
+			startActivity(new Intent(MainActivity.this, SelectActivity.class));
 		} else if (v.getId() == R.id.main_btn_settings) {
 			startActivity(new Intent(MainActivity.this, SettingsActivity.class));
 		}

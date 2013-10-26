@@ -34,11 +34,6 @@
         <activity
             android:name="com.safetaxik.MainActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.safetaxik.SettingsActivity"
@@ -51,8 +46,8 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD1_HdawL9ZdTzsUESPaioKdwvKSpv92OA" />
-
+            android:value="AIzaSyAopWWKVU0T68jtxV5-PYSYz9TvzXjVgr0" />
+        <!-- AIzaSyAopWWKVU0T68jtxV5-PYSYz9TvzXjVgr0 -->
         <activity
             android:name="com.safetaxik.SelectActivity"
             android:label="@string/title_activity_select" >
@@ -60,6 +55,19 @@
         <activity
             android:name="com.safetaxik.CameraActivity"
             android:label="@string/title_activity_camera" >
+        </activity>
+
+        <uses-library android:name="com.google.android.maps" />
+
+        <activity
+            android:name="com.safetaxik.SplashActivity"
+            android:label="@string/title_activity_splash"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

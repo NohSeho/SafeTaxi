@@ -1,7 +1,6 @@
 package com.safetaxik;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,12 +46,13 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 	SharedPreferences	location_pref, setting_pref;
 	Button				btn_message;
 
-	Intent mIntent;
-	String carNo;
-	
-	String c_name, d_name, c_num, d_num;
-	TextView company_name, driver_name, company_num, driver_num;
-	ImageView img_driver;
+	Intent				mIntent;
+	String				carNo;
+
+	String				c_name, d_name, c_num, d_num;
+	TextView			company_name, driver_name, company_num, driver_num;
+	ImageView			img_driver;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,19 +62,11 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
 		provider = locationManager.getBestProvider(criteria, true);
-		mIntent = new Intent();
+		mIntent = new Intent(this.getIntent());
 		carNo = mIntent.getStringExtra("CARNO");
-		
-		
-		company_name = (TextView) findViewById(R.id.company_name);
-		driver_name = (TextView) findViewById(R.id.driver_name);
-		company_name = (TextView) findViewById(R.id.company_name);
-		driver_name = (TextView) findViewById(R.id.driver_name);
-		img_driver = (ImageView) findViewById(R.id.img_driver);
-		
-		carNo.trim();
-		
+
 		init();
+
 	}
 
 	void init() {
@@ -100,20 +92,65 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 			@Override
 			public void onPageScrollStateChanged(int position) {
 				// TODO Auto-generated method stub
+				if (position == 0) {
+					company_name = (TextView) findViewById(R.id.company_name);
+					driver_name = (TextView) findViewById(R.id.driver_name);
+					company_name = (TextView) findViewById(R.id.company_name);
+					driver_name = (TextView) findViewById(R.id.driver_name);
+					img_driver = (ImageView) findViewById(R.id.img_driver);
 
-				if (position == 1) {
+					carNo = carNo.trim();
+					String firstCarNo = carNo.substring(0, 2);
+					String midCarNo = carNo.substring(2, 3);
+					String lastCarNo = carNo.substring(3, 5);
+
+					if (lastCarNo.equals("12")) {
+						c_name = "삼안통상";
+					} else if (lastCarNo.equals("87")) {
+						c_name = "성진운수";
+					} else if (lastCarNo.equals("53")) {
+						c_name = "상연기업";
+					} else if (lastCarNo.equals("10")) {
+						c_name = "국제운수";
+					} else if (lastCarNo.equals("92")) {
+						c_name = "성진운수";
+					} else if (lastCarNo.equals("81")) {
+						c_name = "삼덕상운";
+					} else if (lastCarNo.equals("83")) {
+						c_name = "한일택시";
+					} else if (lastCarNo.equals("45")) {
+						c_name = "통운산업";
+					} else if (lastCarNo.equals("69")) {
+						c_name = "불루택시";
+					} else if (lastCarNo.equals("81")) {
+						c_name = "천진교통";
+					} else if (lastCarNo.equals("32")) {
+						c_name = "삼일운수";
+					} else {
+						c_name = "진일운수";
+					}
+
+					if ((!midCarNo.equals("아")) || (!midCarNo.equals("바")) || (!midCarNo.equals("사"))
+							|| (!midCarNo.equals("자"))) {
+						c_name = "불법택시";
+					}
+					Log.d("fuck", c_name);
+					company_name.setText(c_name);
+				} else if (position == 1) {
 					if (provider == null) { // 위치정보 설정이 안되어 있으면 설정하는 엑티비티로 이동합니다
-						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의").setNeutralButton("이동", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
-							}
-						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
-							@Override
-							public void onCancel(DialogInterface dialog) {
-								finish();
-							}
-						}).show();
+						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의")
+								.setNeutralButton("이동", new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										startActivityForResult(new Intent(
+												android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
+									}
+								}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										finish();
+									}
+								}).show();
 					} else { // 위치 정보 설정이 되어 있으면 현재위치를 받아옵니다
 						locationManager.requestLocationUpdates(provider, 1, 1, RidingActivity.this);
 						setUpMapIfNeeded();
