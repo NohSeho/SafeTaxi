@@ -1,5 +1,7 @@
 package com.safetaxik;
 
+import com.google.android.gms.internal.bu;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -56,6 +58,7 @@ public class SelectActivity extends Activity {
 		final EditText sex = (EditText) layout.findViewById(R.id.edit_carno);
 		builder = new AlertDialog.Builder(SelectActivity.this);
 		builder.setView(layout);
+		builder.setTitle("차량 번호 입력");
 		builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 
 			@Override

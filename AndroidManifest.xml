@@ -14,7 +14,9 @@
     </permission>
 
     <uses-permission android:name="android.permission.CAMERA" />
+  //카메라 사용
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+  //카메라 플레쉬 사용
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -49,7 +51,7 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAopWWKVU0T68jtxV5-PYSYz9TvzXjVgr0" />
-        <!-- AIzaSyAopWWKVU0T68jtxV5-PYSYz9TvzXjVgr0 -->
+
         <activity
             android:name="com.safetaxik.SelectActivity"
             android:label="@string/title_activity_select" >
