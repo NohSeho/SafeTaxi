@@ -80,8 +80,8 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 		PendingIntent mPedingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(
 				getApplicationContext(), RidingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 		mNM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNoti = new NotificationCompat.Builder(getApplicationContext()).setContentTitle("알람택시").setContentText("탑승중")
-				.setSmallIcon(R.drawable.ic_launcher).setTicker("알림!!!").setAutoCancel(true)
+		mNoti = new NotificationCompat.Builder(getApplicationContext()).setContentTitle("알림택시").setContentText("탑승중")
+				.setSmallIcon(R.drawable.ic_launcher).setTicker("탑승!!").setAutoCancel(true)
 				.setContentIntent(mPedingIntent).build();
 		mNoti.flags = Notification.FLAG_ONGOING_EVENT;
 		mNM.notify(0000, mNoti);
