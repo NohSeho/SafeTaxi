@@ -203,7 +203,7 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 							if (Utils.getPref(ing_pref, "ING").equals("on")) {
 								Utils.setPref(ing_pref, "ING", "off");
 								Utils.showToast(getApplicationContext(), "하차하였습니다.");
-								Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"), "[안심택시]안전하게 하차하였습니다.");
+								Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "Phone1"), "[안심택시]안전하게 하차하였습니다.");
 								finish();
 							}
 						}
