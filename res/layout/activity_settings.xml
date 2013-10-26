@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context=".SettingsActivity" >
+
+    <EditText
+        android:id="@+id/settings_edit_phone_1"
+        android:layout_width="285dp"
+        android:layout_height="45dp"
+        android:hint="내 위치를 보낼 번호 ex) 01012345678"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/settings_btn_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/settings_edit_phone_1"
+        android:text="설정" />
+
+</RelativeLayout>
