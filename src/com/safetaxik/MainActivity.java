@@ -63,7 +63,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (Utils.getPref(ing_pref, "ING").equals("on")) {
 				Utils.setPref(ing_pref, "ING", "off");
 				Utils.showToast(getApplicationContext(), "하차하였습니다.");
-				Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"), "[안심택시]안전하게 하차하였습니다.");
+				Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"),
+						"[안심택시]안전하게 하차하였습니다.");
 			} else {
 				Utils.showToast(getApplicationContext(), "탑승후 시도해주세요");
 			}
@@ -93,7 +94,6 @@ public class MainActivity extends Activity implements OnClickListener {
 					Intent mIntent = new Intent(MainActivity.this, SearchActivity.class);
 					mIntent.putExtra("CARNO", sex.getText().toString());
 					startActivity(mIntent);
-					finish();
 				}
 			});
 			alertDialog = builder.create();

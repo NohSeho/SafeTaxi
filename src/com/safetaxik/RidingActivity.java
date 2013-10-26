@@ -77,9 +77,11 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 	}
 
 	void init() {
-		PendingIntent mPedingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), RidingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent mPedingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(
+				getApplicationContext(), RidingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 		mNM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNoti = new NotificationCompat.Builder(getApplicationContext()).setContentTitle("알림택시").setContentText("탑승중").setSmallIcon(R.drawable.ic_launcher).setTicker("탑승!!").setAutoCancel(true)
+		mNoti = new NotificationCompat.Builder(getApplicationContext()).setContentTitle("알림택시").setContentText("탑승중")
+				.setSmallIcon(R.drawable.ic_launcher).setTicker("탑승!!").setAutoCancel(true)
 				.setContentIntent(mPedingIntent).build();
 		mNoti.flags = Notification.FLAG_ONGOING_EVENT;
 		mNM.notify(0000, mNoti);
@@ -88,7 +90,93 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 		ing_pref = getSharedPreferences("ING", MODE_PRIVATE);
 		pager = (ViewPager) findViewById(R.id.riding_pager);
 		adapter = new RidingPagerAdapter(this);
+
 		pager.setAdapter(adapter);
+		if (pager.getCurrentItem() == 0) {
+
+			company_name = (TextView) findViewById(R.id.company_name);
+			driver_name = (TextView) findViewById(R.id.driver_name);
+			company_num = (TextView) findViewById(R.id.company_num);
+			driver_num = (TextView) findViewById(R.id.driver_num);
+			img_driver = (ImageView) findViewById(R.id.img_driver);
+
+			carNo = carNo.trim();
+			if (carNo.length() < 5) {
+				carNo = "34아2095";
+			}
+			String firstCarNo = carNo.substring(0, 2);
+			String midCarNo = carNo.substring(2, 3);
+			String lastCarNo = carNo.substring(3, 5);
+
+			if (lastCarNo.equals("12")) {
+				c_name = "삼안통상";
+				img_driver.setImageResource(R.drawable.info_gys);
+				driver_name.setText("사장 : 권영선");
+				driver_num.setText("서울시 강북구 수유4동 535-13");
+			} else if (lastCarNo.equals("87")) {
+				c_name = "성진운수";
+				img_driver.setImageResource(R.drawable.info_kjo);
+				driver_name.setText("사장 : 김정옥");
+				driver_num.setText("서울시 도봉구 방학1동 705-11");
+			} else if (lastCarNo.equals("53")) {
+				c_name = "상연기업";
+				img_driver.setImageResource(R.drawable.info_kjo);
+				driver_name.setText("사장 : 김정옥");
+				driver_num.setText("서울시 도봉구 방학1동 705-11");
+			} else if (lastCarNo.equals("10")) {
+				c_name = "국제운수";
+				img_driver.setImageResource(R.drawable.info_lsd);
+				driver_name.setText("사장 : 이성동");
+				driver_num.setText("서울시 도봉구 방학1동 705-11");
+			} else if (lastCarNo.equals("92")) {
+				c_name = "성진운수";
+				img_driver.setImageResource(R.drawable.info_ygs);
+				driver_name.setText("사장 : 유규상");
+				driver_num.setText("서울시 강북구 수유4동 535-13");
+			} else if (lastCarNo.equals("81")) {
+				c_name = "삼덕상운";
+				img_driver.setImageResource(R.drawable.info_kjo);
+				driver_name.setText("사장 : 김정옥");
+				driver_num.setText("서울시 도봉구 방학1동 705-11");
+			} else if (lastCarNo.equals("83")) {
+				c_name = "한일택시";
+				img_driver.setImageResource(R.drawable.info_lsd);
+				driver_name.setText("사장 : 이성동");
+				driver_num.setText("서울시 강북구 수유4동 535-13");
+			} else if (lastCarNo.equals("45")) {
+				c_name = "통운산업";
+				img_driver.setImageResource(R.drawable.info_lsd);
+				driver_name.setText("사장 : 이성동");
+				driver_num.setText("서울시 강북구 수유4동 535-13");
+			} else if (lastCarNo.equals("69")) {
+				c_name = "불루택시";
+				img_driver.setImageResource(R.drawable.info_kjo);
+				driver_name.setText("사장 : 김정옥");
+				driver_num.setText("서울시 도봉구 방학1동 705-11");
+			} else if (lastCarNo.equals("81")) {
+				c_name = "천진교통";
+				img_driver.setImageResource(R.drawable.info_ygs);
+				driver_name.setText("사장 : 유규상");
+				driver_num.setText("서울시 강북구 수유4동 535-13");
+			} else if (lastCarNo.equals("32")) {
+				c_name = "삼일운수";
+				img_driver.setImageResource(R.drawable.info_lsd);
+				driver_name.setText("사장 : 이성동");
+				driver_num.setText("서울시 강북구 수유4동 535-13");
+			} else {
+				c_name = "국도산업";
+				img_driver.setImageResource(R.drawable.info_kjo);
+				driver_name.setText("사장 : 김정옥");
+				driver_num.setText("서울시 도봉구 방학1동 705-11");
+			}
+			if ((!midCarNo.equals("아")) && (!midCarNo.equals("바")) && (!midCarNo.equals("사"))
+					&& (!midCarNo.equals("자"))) {
+				c_name = "미등록택시";
+			}
+			company_name.setText(c_name);
+
+			Utils.setPref(ing_pref, "ING", "on");
+		}
 		pager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
@@ -115,53 +203,6 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 							pager.setCurrentItem(1);
 						}
 					});
-					company_name = (TextView) findViewById(R.id.company_name);
-					driver_name = (TextView) findViewById(R.id.driver_name);
-					company_name = (TextView) findViewById(R.id.company_name);
-					driver_name = (TextView) findViewById(R.id.driver_name);
-					img_driver = (ImageView) findViewById(R.id.img_driver);
-
-					carNo = carNo.trim();
-					if (carNo.length() < 5) {
-						carNo = "34아2095";
-					}
-					String firstCarNo = carNo.substring(0, 2);
-					String midCarNo = carNo.substring(2, 3);
-					String lastCarNo = carNo.substring(3, 5);
-
-					if (lastCarNo.equals("12")) {
-						c_name = "삼안통상";
-					} else if (lastCarNo.equals("87")) {
-						c_name = "성진운수";
-					} else if (lastCarNo.equals("53")) {
-						c_name = "상연기업";
-					} else if (lastCarNo.equals("10")) {
-						c_name = "국제운수";
-					} else if (lastCarNo.equals("92")) {
-						c_name = "성진운수";
-					} else if (lastCarNo.equals("81")) {
-						c_name = "삼덕상운";
-					} else if (lastCarNo.equals("83")) {
-						c_name = "한일택시";
-					} else if (lastCarNo.equals("45")) {
-						c_name = "통운산업";
-					} else if (lastCarNo.equals("69")) {
-						c_name = "불루택시";
-					} else if (lastCarNo.equals("81")) {
-						c_name = "천진교통";
-					} else if (lastCarNo.equals("32")) {
-						c_name = "삼일운수";
-					} else {
-						c_name = "진일운수";
-					}
-
-					if ((!midCarNo.equals("아")) || (!midCarNo.equals("바")) || (!midCarNo.equals("사")) || (!midCarNo.equals("자"))) {
-						c_name = "회사명 : 불법택시";
-					}
-					Log.d("fuck", c_name);
-					company_name.setText(c_name);
-
-					Utils.setPref(ing_pref, "ING", "on");
 				} else if (position == 1) {
 					img_left = (ImageView) findViewById(R.id.img_left);
 					img_left.setOnClickListener(new OnClickListener() {
@@ -172,17 +213,19 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 						}
 					});
 					if (provider == null) { // 위치정보 설정이 안되어 있으면 설정하는 엑티비티로 이동합니다
-						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의").setNeutralButton("이동", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
-							}
-						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
-							@Override
-							public void onCancel(DialogInterface dialog) {
-								finish();
-							}
-						}).show();
+						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의")
+								.setNeutralButton("이동", new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										startActivityForResult(new Intent(
+												android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
+									}
+								}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										finish();
+									}
+								}).show();
 					} else { // 위치 정보 설정이 되어 있으면 현재위치를 받아옵니다
 						locationManager.requestLocationUpdates(provider, 1, 1, RidingActivity.this);
 						setUpMapIfNeeded();
@@ -203,7 +246,8 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 							if (Utils.getPref(ing_pref, "ING").equals("on")) {
 								Utils.setPref(ing_pref, "ING", "off");
 								Utils.showToast(getApplicationContext(), "하차하였습니다.");
-								Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"), "[안심택시]안전하게 하차하였습니다.");
+								Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"),
+										"[안심택시]안전하게 하차하였습니다.");
 								finish();
 							}
 						}
