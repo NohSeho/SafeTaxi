@@ -43,9 +43,8 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 	LocationManager		locationManager;
 	String				provider;
 
-	SharedPreferences	location_pref, setting_pref, ing_pref;
+	SharedPreferences	location_pref, setting_pref;
 	Button				btn_message;
-	Button				btn_cancel;
 
 	Intent				mIntent;
 	String				carNo;
@@ -67,12 +66,12 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 		carNo = mIntent.getStringExtra("CARNO");
 
 		init();
+
 	}
 
 	void init() {
 		location_pref = getSharedPreferences("LOCATION", MODE_PRIVATE);
 		setting_pref = getSharedPreferences("SETTING", MODE_PRIVATE);
-		ing_pref = getSharedPreferences("ING", MODE_PRIVATE);
 		pager = (ViewPager) findViewById(R.id.riding_pager);
 		adapter = new RidingPagerAdapter(this);
 		pager.setAdapter(adapter);
@@ -101,9 +100,6 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 					img_driver = (ImageView) findViewById(R.id.img_driver);
 
 					carNo = carNo.trim();
-					if (carNo.length() < 5) {
-						carNo = "31바3674";
-					}
 					String firstCarNo = carNo.substring(0, 2);
 					String midCarNo = carNo.substring(2, 3);
 					String lastCarNo = carNo.substring(3, 5);
@@ -134,29 +130,24 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 						c_name = "진일운수";
 					}
 
-					if ((!midCarNo.equals("아")) || (!midCarNo.equals("바")) || (!midCarNo.equals("사"))
-							|| (!midCarNo.equals("자"))) {
+					if ((!midCarNo.equals("아")) || (!midCarNo.equals("바")) || (!midCarNo.equals("사")) || (!midCarNo.equals("자"))) {
 						c_name = "불법택시";
 					}
 					Log.d("fuck", c_name);
 					company_name.setText(c_name);
-
-					Utils.setPref(ing_pref, "ING", "on");
 				} else if (position == 1) {
 					if (provider == null) { // 위치정보 설정이 안되어 있으면 설정하는 엑티비티로 이동합니다
-						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의")
-								.setNeutralButton("이동", new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										startActivityForResult(new Intent(
-												android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
-									}
-								}).setOnCancelListener(new DialogInterface.OnCancelListener() {
-									@Override
-									public void onCancel(DialogInterface dialog) {
-										finish();
-									}
-								}).show();
+						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의").setNeutralButton("이동", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
+							}
+						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+							@Override
+							public void onCancel(DialogInterface dialog) {
+								finish();
+							}
+						}).show();
 					} else { // 위치 정보 설정이 되어 있으면 현재위치를 받아옵니다
 						locationManager.requestLocationUpdates(provider, 1, 1, RidingActivity.this);
 						setUpMapIfNeeded();
@@ -167,20 +158,6 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 						@Override
 						public void onClick(View v) {
 							Utils.readySMS(RidingActivity.this);
-						}
-					});
-					btn_cancel = (Button) findViewById(R.id.riding_btn_cancel);
-					btn_cancel.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							if (Utils.getPref(ing_pref, "ING").equals("on")) {
-								Utils.setPref(ing_pref, "ING", "off");
-								Utils.showToast(getApplicationContext(), "하차하였습니다.");
-								Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"),
-										"[안심택시]안전하게 하차하였습니다.");
-								finish();
-							}
 						}
 					});
 				}
@@ -258,8 +235,7 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 			double lat = location.getLatitude();
 			double lng = location.getLongitude();
 
-			// Utils.showToast(RidingActivity.this, "위도 : " + lat + " 경도 : " +
-			// lng);
+			Utils.showToast(RidingActivity.this, "위도 : " + lat + " 경도 : " + lng);
 			// 주소 갖고오기
 			Geocoder gc = new Geocoder(this, Locale.KOREAN);
 			try {
