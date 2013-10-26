@@ -35,21 +35,21 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@+id/map"
-        android:layout_margin="10dp"
         android:layout_weight="1" >
 
         <Button
+            android:id="@+id/riding_btn_cancel"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="하차" />
+            android:background="@drawable/exitt" />
 
         <Button
             android:id="@+id/riding_btn_message"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="문자보내기" />
+            android:background="@drawable/police" />
     </LinearLayout>
 
 </LinearLayout>
