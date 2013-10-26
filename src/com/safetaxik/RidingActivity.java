@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +20,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -43,15 +47,19 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 	LocationManager		locationManager;
 	String				provider;
 
-	SharedPreferences	location_pref, setting_pref;
+	SharedPreferences	location_pref, setting_pref, ing_pref;
 	Button				btn_message;
+	Button				btn_cancel;
 
 	Intent				mIntent;
 	String				carNo;
 
 	String				c_name, d_name, c_num, d_num;
 	TextView			company_name, driver_name, company_num, driver_num;
-	ImageView			img_driver;
+	ImageView			img_driver, img_left, img_right;
+
+	NotificationManager	mNM		= null;
+	Notification		mNoti	= null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,12 +74,18 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 		carNo = mIntent.getStringExtra("CARNO");
 
 		init();
-
 	}
 
 	void init() {
+		PendingIntent mPedingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), RidingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+		mNM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNoti = new NotificationCompat.Builder(getApplicationContext()).setContentTitle("알림택시").setContentText("탑승중").setSmallIcon(R.drawable.ic_launcher).setTicker("탑승!!").setAutoCancel(true)
+				.setContentIntent(mPedingIntent).build();
+		mNoti.flags = Notification.FLAG_ONGOING_EVENT;
+		mNM.notify(0000, mNoti);
 		location_pref = getSharedPreferences("LOCATION", MODE_PRIVATE);
 		setting_pref = getSharedPreferences("SETTING", MODE_PRIVATE);
+		ing_pref = getSharedPreferences("ING", MODE_PRIVATE);
 		pager = (ViewPager) findViewById(R.id.riding_pager);
 		adapter = new RidingPagerAdapter(this);
 		pager.setAdapter(adapter);
@@ -93,6 +107,14 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 			public void onPageScrollStateChanged(int position) {
 				// TODO Auto-generated method stub
 				if (position == 0) {
+					img_right = (ImageView) findViewById(R.id.img_right);
+					img_right.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							pager.setCurrentItem(1);
+						}
+					});
 					company_name = (TextView) findViewById(R.id.company_name);
 					driver_name = (TextView) findViewById(R.id.driver_name);
 					company_name = (TextView) findViewById(R.id.company_name);
@@ -100,6 +122,9 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 					img_driver = (ImageView) findViewById(R.id.img_driver);
 
 					carNo = carNo.trim();
+					if (carNo.length() < 5) {
+						carNo = "34아2095";
+					}
 					String firstCarNo = carNo.substring(0, 2);
 					String midCarNo = carNo.substring(2, 3);
 					String lastCarNo = carNo.substring(3, 5);
@@ -131,11 +156,21 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 					}
 
 					if ((!midCarNo.equals("아")) || (!midCarNo.equals("바")) || (!midCarNo.equals("사")) || (!midCarNo.equals("자"))) {
-						c_name = "불법택시";
+						c_name = "회사명 : 불법택시";
 					}
 					Log.d("fuck", c_name);
 					company_name.setText(c_name);
+
+					Utils.setPref(ing_pref, "ING", "on");
 				} else if (position == 1) {
+					img_left = (ImageView) findViewById(R.id.img_left);
+					img_left.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							pager.setCurrentItem(0);
+						}
+					});
 					if (provider == null) { // 위치정보 설정이 안되어 있으면 설정하는 엑티비티로 이동합니다
 						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의").setNeutralButton("이동", new DialogInterface.OnClickListener() {
 							@Override
@@ -158,6 +193,19 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 						@Override
 						public void onClick(View v) {
 							Utils.readySMS(RidingActivity.this);
+						}
+					});
+					btn_cancel = (Button) findViewById(R.id.riding_btn_cancel);
+					btn_cancel.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							if (Utils.getPref(ing_pref, "ING").equals("on")) {
+								Utils.setPref(ing_pref, "ING", "off");
+								Utils.showToast(getApplicationContext(), "하차하였습니다.");
+								Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"), "[안심택시]안전하게 하차하였습니다.");
+								finish();
+							}
 						}
 					});
 				}
@@ -235,7 +283,8 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 			double lat = location.getLatitude();
 			double lng = location.getLongitude();
 
-			Utils.showToast(RidingActivity.this, "위도 : " + lat + " 경도 : " + lng);
+			// Utils.showToast(RidingActivity.this, "위도 : " + lat + " 경도 : " +
+			// lng);
 			// 주소 갖고오기
 			Geocoder gc = new Geocoder(this, Locale.KOREAN);
 			try {
