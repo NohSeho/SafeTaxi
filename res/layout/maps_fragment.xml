@@ -19,13 +19,15 @@
                 android:id="@+id/droppin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Drop Pin" />
+                android:text="Drop Pin"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/pinremove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Remove pin" />
+                android:text="Remove pin"
+                android:visibility="gone" />
         </LinearLayout>
     </fragment>
 

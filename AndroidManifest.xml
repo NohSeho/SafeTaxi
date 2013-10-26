@@ -52,6 +52,15 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD1_HdawL9ZdTzsUESPaioKdwvKSpv92OA" />
+
+        <activity
+            android:name="com.safetaxik.SelectActivity"
+            android:label="@string/title_activity_select" >
+        </activity>
+        <activity
+            android:name="com.safetaxik.CameraActivity"
+            android:label="@string/title_activity_camera" >
+        </activity>
     </application>
 
 </manifest>

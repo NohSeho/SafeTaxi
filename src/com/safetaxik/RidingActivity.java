@@ -24,7 +24,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,6 +47,12 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 	SharedPreferences	location_pref, setting_pref;
 	Button				btn_message;
 
+	Intent mIntent;
+	String carNo;
+	
+	String c_name, d_name, c_num, d_num;
+	TextView company_name, driver_name, company_num, driver_num;
+	ImageView img_driver;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,7 +62,18 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
 		provider = locationManager.getBestProvider(criteria, true);
-
+		mIntent = new Intent();
+		carNo = mIntent.getStringExtra("CARNO");
+		
+		
+		company_name = (TextView) findViewById(R.id.company_name);
+		driver_name = (TextView) findViewById(R.id.driver_name);
+		company_name = (TextView) findViewById(R.id.company_name);
+		driver_name = (TextView) findViewById(R.id.driver_name);
+		img_driver = (ImageView) findViewById(R.id.img_driver);
+		
+		carNo.trim();
+		
 		init();
 	}
 
