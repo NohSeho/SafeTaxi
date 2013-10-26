@@ -3,8 +3,12 @@ package com.safetaxik;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-
 import android.app.AlertDialog;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,7 +56,10 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 
 	String				c_name, d_name, c_num, d_num;
 	TextView			company_name, driver_name, company_num, driver_num;
-	ImageView			img_driver;
+	ImageView			img_driver, img_left, img_right;
+
+	NotificationManager	mNM		= null;
+	Notification		mNoti	= null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,14 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 	}
 
 	void init() {
+		PendingIntent mPedingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(
+				getApplicationContext(), RidingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+		mNM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNoti = new NotificationCompat.Builder(getApplicationContext()).setContentTitle("알람택시").setContentText("탑승중")
+				.setSmallIcon(R.drawable.ic_launcher).setTicker("알림!!!").setAutoCancel(true)
+				.setContentIntent(mPedingIntent).build();
+		mNoti.flags = Notification.FLAG_ONGOING_EVENT;
+		mNM.notify(0000, mNoti);
 		location_pref = getSharedPreferences("LOCATION", MODE_PRIVATE);
 		setting_pref = getSharedPreferences("SETTING", MODE_PRIVATE);
 		ing_pref = getSharedPreferences("ING", MODE_PRIVATE);
@@ -94,6 +109,14 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 			public void onPageScrollStateChanged(int position) {
 				// TODO Auto-generated method stub
 				if (position == 0) {
+					img_right = (ImageView) findViewById(R.id.img_right);
+					img_right.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							pager.setCurrentItem(1);
+						}
+					});
 					company_name = (TextView) findViewById(R.id.company_name);
 					driver_name = (TextView) findViewById(R.id.driver_name);
 					company_name = (TextView) findViewById(R.id.company_name);
@@ -102,7 +125,7 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 
 					carNo = carNo.trim();
 					if (carNo.length() < 5) {
-						carNo = "31바3674";
+						carNo = "34아2095";
 					}
 					String firstCarNo = carNo.substring(0, 2);
 					String midCarNo = carNo.substring(2, 3);
@@ -136,13 +159,21 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 
 					if ((!midCarNo.equals("아")) || (!midCarNo.equals("바")) || (!midCarNo.equals("사"))
 							|| (!midCarNo.equals("자"))) {
-						c_name = "불법택시";
+						c_name = "회사명 : 불법택시";
 					}
 					Log.d("fuck", c_name);
 					company_name.setText(c_name);
 
 					Utils.setPref(ing_pref, "ING", "on");
 				} else if (position == 1) {
+					img_left = (ImageView) findViewById(R.id.img_left);
+					img_left.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							pager.setCurrentItem(0);
+						}
+					});
 					if (provider == null) { // 위치정보 설정이 안되어 있으면 설정하는 엑티비티로 이동합니다
 						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의")
 								.setNeutralButton("이동", new DialogInterface.OnClickListener() {

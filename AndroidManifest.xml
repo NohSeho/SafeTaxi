@@ -14,9 +14,7 @@
     </permission>
 
     <uses-permission android:name="android.permission.CAMERA" />
-  //카메라 사용
     <uses-permission android:name="android.permission.FLASHLIGHT" />
-  //카메라 플레쉬 사용
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -59,6 +57,8 @@
         <activity
             android:name="com.safetaxik.CameraActivity"
             android:label="@string/title_activity_camera" >
+        </activity>
+        <activity android:name="com.safetaxik.SearchActivity" >
         </activity>
 
         <uses-library android:name="com.google.android.maps" />
