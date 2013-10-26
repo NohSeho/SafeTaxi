@@ -105,35 +105,7 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 
 						@Override
 						public void onClick(View v) {
-
-							String City = Utils.getPref(location_pref, "City");
-							String SubCity = Utils.getPref(location_pref, "SubCity");
-							String Town = Utils.getPref(location_pref, "Town");
-							String Detail = Utils.getPref(location_pref, "Detail");
-
-							String tempNum = Utils.getPref(setting_pref, "phoneNum1");
-							String tempMsg = Utils.msgHeaer + City + " " + SubCity + " " + Town + " " + Detail + Utils.msgCenter + "10" + Utils.msgTail;
-
-							ArrayList<String> tempMsgList = new ArrayList<String>();
-							int z = 0;
-							while (tempMsg.length() > 40) {
-								Log.e("while", "" + (z + 1) + "번째");
-								tempMsgList.add(tempMsg.substring(0, 40));
-								tempMsg = tempMsg.substring(40, tempMsg.length());
-							}
-
-							tempMsgList.add(tempMsg.substring(0, tempMsg.length()));
-
-							String[] tempMsgArray = new String[tempMsgList.size()];
-
-							for (int i = 0; i < tempMsgList.size(); i++) {
-								tempMsgArray[i] = tempMsgList.get(i);
-							}
-
-							if (!tempNum.equals("") && tempNum != null) {
-								Utils.smsSender(RidingActivity.this, tempNum, tempMsgArray);
-							} else
-								Utils.showToast(RidingActivity.this, "설정화면에서 전화번호를 먼저 설정해주세요");
+							Utils.readySMS(RidingActivity.this);
 						}
 					});
 				}
