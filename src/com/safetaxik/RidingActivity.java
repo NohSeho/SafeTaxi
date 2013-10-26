@@ -83,6 +83,8 @@ public class RidingActivity extends FragmentActivity implements LocationListener
 				.setContentIntent(mPedingIntent).build();
 		mNoti.flags = Notification.FLAG_ONGOING_EVENT;
 		mNM.notify(0000, mNoti);
+		
+		
 		location_pref = getSharedPreferences("LOCATION", MODE_PRIVATE);
 		setting_pref = getSharedPreferences("SETTING", MODE_PRIVATE);
 		ing_pref = getSharedPreferences("ING", MODE_PRIVATE);

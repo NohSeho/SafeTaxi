@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -63,7 +65,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (Utils.getPref(ing_pref, "ING").equals("on")) {
 				Utils.setPref(ing_pref, "ING", "off");
 				Utils.showToast(getApplicationContext(), "하차하였습니다.");
-				Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "phoneNum1"), "[안심택시]안전하게 하차하였습니다.");
+				Utils.smsSender(getApplicationContext(), Utils.getPref(setting_pref, "Phone1"), "[안심택시]안전하게 하차하였습니다.");
+				NotificationManager NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				NM.cancel(0000);
 			} else {
 				Utils.showToast(getApplicationContext(), "탑승후 시도해주세요");
 			}
