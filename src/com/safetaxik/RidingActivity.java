@@ -1,171 +1,227 @@
 package com.safetaxik;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Point;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.view.Display;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.maps.MapController;
 import com.safetaxik.adapter.RidingPagerAdapter;
 import com.safetaxik.util.Utils;
 
-public class RidingActivity extends FragmentActivity implements OnMapClickListener, LocationListener, OnMarkerClickListener {
-	ViewPager			pager;
-	RidingPagerAdapter	adapter;
+public class RidingActivity extends FragmentActivity implements LocationListener {
+	ViewPager				pager;
+	RidingPagerAdapter		adapter;
 
-	GoogleMap			mMap;
-	LocationManager		locationManager;
-	String				provider;
-	Location			location;
-	double				latitude, longitude;
-	LatLng				latLng;
-	Marker				marker;
-	TextView			mTapTextView;
-	Button				pinRemove, dropPin;
-	MapController		mapController;
+	private GoogleMap		mmap;
+	private LocationManager	locationManager;
+	private String			provider;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		provider = LocationManager.NETWORK_PROVIDER;
-		locationManager.requestLocationUpdates(provider, 0, 0, this);
-		GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 		setContentView(R.layout.activity_riding);
+
+		GooglePlayServicesUtil.isGooglePlayServicesAvailable(RidingActivity.this);
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		Criteria criteria = new Criteria();
+		provider = locationManager.getBestProvider(criteria, true);
 
 		init();
 	}
 
 	void init() {
+
 		pager = (ViewPager) findViewById(R.id.riding_pager);
 		adapter = new RidingPagerAdapter(this);
 		pager.setAdapter(adapter);
+		pager.setOnPageChangeListener(new OnPageChangeListener() {
 
-		if (pager.getCurrentItem() == 1) {
-			setUpMapIfNeeded();
+			@Override
+			public void onPageSelected(int arg0) {
+				// TODO Auto-generated method stub
 
-			pinRemove = (Button) findViewById(R.id.pinremove);
-			dropPin = (Button) findViewById(R.id.droppin);
+			}
 
-			pinRemove.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
 
-				@Override
-				public void onClick(View v) {
-					mMap.clear();
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int position) {
+				// TODO Auto-generated method stub
+
+				if (position == 1) {
+					if (provider == null) { // 위치정보 설정이 안되어 있으면 설정하는 엑티비티로 이동합니다
+						new AlertDialog.Builder(RidingActivity.this).setTitle("위치서비스 동의")
+								.setNeutralButton("이동", new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										startActivityForResult(new Intent(
+												android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
+									}
+								}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										finish();
+									}
+								}).show();
+					} else { // 위치 정보 설정이 되어 있으면 현재위치를 받아옵니다
+						locationManager.requestLocationUpdates(provider, 1, 1, RidingActivity.this);
+						setUpMapIfNeeded();
+					}
+
 				}
-			});
+			}
+		});
 
-			dropPin.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Display display = getWindowManager().getDefaultDisplay();
-
-					int width = display.getWidth();
-					int height = display.getHeight();
-
-					Point point = new Point(width / 2, height / 2);
-					LatLng latLng = mMap.getProjection().fromScreenLocation(point);
-					System.out.println("+++++++++++++" + width / 2 + "+++" + height / 2);
-					marker = mMap.addMarker(new MarkerOptions().position(latLng).title("").snippet("").draggable(true));
-					marker.getPosition();
-					marker.showInfoWindow();
-				}
-			});
-		}
 		// mMap.setLocationSource(new ;
 	}
 
 	@Override
-	public void onPause() {
-		super.onPause();
-		locationManager.removeUpdates(RidingActivity.this);
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {// 위치설정
+																					// 엑티비티
+																					// 종료
+																					// 후
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+		case 0:
+			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			Criteria criteria = new Criteria();
+			provider = locationManager.getBestProvider(criteria, true);
+			if (provider == null) {// 사용자가 위치설정동의 안했을때 종료
+				finish();
+			} else {// 사용자가 위치설정 동의 했을때
+				locationManager.requestLocationUpdates(provider, 1L, 2F, RidingActivity.this);
+				setUpMapIfNeeded();
+			}
+			break;
+		}
 	}
 
 	@Override
-	public void onResume() {
+	public void onBackPressed() {
+		this.finish();
+	}
+
+	@Override
+	protected void onResume() {
 		super.onResume();
-
-		if (pager.getCurrentItem() == 1)
+		if (pager.getCurrentItem() == 1) {
 			setUpMapIfNeeded();
-	}
 
-	void setUpMapIfNeeded() {
-		if (pager.getCurrentItem() == 1)
-			if (mMap == null) {
-				mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-				if (mMap != null) {
-					setUpMap();
-				}
-			}
-	}
+		}
 
-	void setUpMap() {
-		mMap.setOnMapClickListener(this);
-		mMap.setMyLocationEnabled(true);
-		mMap.getMyLocation();
-		mMap.setOnMarkerClickListener(this);
-		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-
-			@Override
-			public void onInfoWindowClick(Marker arg0) {
-				Utils.showToast(RidingActivity.this, "You clicked on InfoWindow ...");
-			}
-		});
 	}
 
 	@Override
-	public void onMapClick(LatLng arg0) {
+	protected void onPause() {
+		super.onPause();
+		if (pager.getCurrentItem() == 1) {
+			locationManager.removeUpdates(this);
+		}
+	}
+
+	private void setUpMapIfNeeded() {
+		if (mmap == null) {
+			mmap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+			if (mmap != null) {
+				setUpMap();
+			}
+		}
+	}
+
+	private void setUpMap() {
+		mmap.setMyLocationEnabled(true);
+		mmap.getMyLocation();
 
 	}
+
+	boolean	locationTag	= true;
 
 	@Override
 	public void onLocationChanged(Location location) {
-		latitude = location.getLatitude();
-		longitude = location.getLongitude();
-	}
+		if (locationTag) {// 한번만 위치를 가져오기 위해서 tag를 주었습니다
+			Log.d("myLog", "onLocationChanged: !!" + "onLocationChanged!!");
+			double lat = location.getLatitude();
+			double lng = location.getLongitude();
 
-	@Override
-	public void onProviderEnabled(String provider) {
+			Toast.makeText(RidingActivity.this, "위도  : " + lat + " 경도: " + lng, Toast.LENGTH_SHORT).show();
+			// 주소 갖고오기
+			Geocoder gc = new Geocoder(this, Locale.KOREAN);
+			try {
 
-	}
+				List<Address> addresses = gc.getFromLocation(lat, lng, 1);
+				StringBuilder sb = new StringBuilder();
+				if (addresses.size() > 0) {
+					Address address = addresses.get(0);
+					for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
+						sb.append(address.getAddressLine(i)).append("\n");
+					sb.append(address.getCountryName()).append(" "); // 나라코드
+					sb.append(address.getLocality()).append(" "); // 시
+					sb.append(address.getSubLocality() + " "); // 구
+					sb.append(address.getThoroughfare()).append(" "); // 동
+					sb.append(address.getFeatureName()).append(" "); // 번지
+					Utils.showToast(getApplicationContext(), "내주소 : " + sb.toString());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-	@Override
-	public boolean onMarkerClick(Marker arg0) {
-		marker.getPosition();
-		marker.showInfoWindow();
+			mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 16));
+			locationTag = false;
+		}
 
-		marker.setTitle("Longitude = " + marker.getPosition().longitude);
-		marker.setSnippet("Latitude = " + marker.getPosition().latitude);
-
-		return true;
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public boolean onMarkerClick(Marker marker) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void onMapClick(LatLng point) {
+		// TODO Auto-generated method stub
 
 	}
 }
