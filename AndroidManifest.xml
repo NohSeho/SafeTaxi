@@ -49,11 +49,9 @@
             android:label="@string/title_activity_riding" >
         </activity>
 
-        <uses-library android:name="com.google.android.maps" />
-
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAopWWKVU0T68jtxV5-PYSYz9TvzXjVgr0" />
+            android:value="AIzaSyD1_HdawL9ZdTzsUESPaioKdwvKSpv92OA" />
     </application>
 
 </manifest>

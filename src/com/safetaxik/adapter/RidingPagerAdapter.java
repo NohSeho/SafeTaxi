@@ -1,20 +1,16 @@
 package com.safetaxik.adapter;
 
-import com.google.android.gms.maps.SupportMapFragment;
 import com.safetaxik.R;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 
 public class RidingPagerAdapter extends PagerAdapter {
-	LayoutInflater inflater;
+	LayoutInflater	inflater;
 
 	public RidingPagerAdapter(Context context) {
 		super();
